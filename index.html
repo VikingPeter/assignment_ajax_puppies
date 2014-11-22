@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+		<script src="ajax.js">	</script>
+		<style>
+		.waiting {
+			color: yellow;
+		}
+		.success {
+			color: green;
+		}
+		.error {
+			color: red;
+		}
+		</style>
+	</head>
+
+	<body>
+		<span class="flash"></span>
+		<form class="puppy-form">
+			Name:
+			<div>
+				<input type="text" class="puppy-name">
+			</div><br>
+			Breed:
+			<div>
+				<select class="select-puppies"></select>
+			</div><br>
+			<div>
+				<button type="submit">Send that Puppy!</button>
+			</div>
+			<br>
+			<h2>Our Puppies</h2>
+			<a id="refresh" href="#">refresh the list of puppies</a>
+			<ul class="index-puppies">
+			</ul>
+		</form>
+	</body>
+</html>
