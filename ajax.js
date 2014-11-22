@@ -13,9 +13,9 @@ function getPupsList() {
 				appendPup(puppy, "li id=" + json[i].name, pupList);
 			};
 		},
-		error: function( xhr, status, errorThrown ) {
-			$('span').text("That didn't work. Not even a little bit.");
-		}
+	  error: function( xhr, status, errorThrown ) {
+	  	$(".flash").text(status).addClass("error").show();
+	  }
 	});
 }
 
@@ -33,9 +33,9 @@ function getBreedsList() {
 				appendPup(json[i].name, "option value=" + json[i].id, breedSelect);
 			};
 		},
-		error: function( xhr, status, errorThrown ) {
-			$('.flash').text("That didn't work. Not even a little bit.");
-		}
+	  error: function( xhr, status, errorThrown ) {
+	  	$(".flash").text(status).addClass("error").show();
+	  }
 	});
 }
 
@@ -52,6 +52,9 @@ function sendPup() {
 	  data: $('.puppy-form').serializeArray(),
 	  success: function( json ) {
 	  	$('span').text(json.name + " created successfully");
+	  },
+	  error: function( xhr, status, errorThrown ) {
+	  	$(".flash").text(status).addClass("error");
 	  }
 	})
 
@@ -67,20 +70,20 @@ $(document).ready(function() {
 		$('li').remove();
 		getPupsList();
 	});
+
 	$(document).on("ajaxStart", function() {
-		$(".flash").text("Waiting...").addClass("waiting");
+		$(".flash").text("Waiting...").addClass("waiting").show();
 	});
+
 	$(document).on("ajaxSuccess", function () {
-		$(".flash").text("Finished!").addClass("success");
+		$(".flash").text("Finished!").addClass("success").show();
 		setTimeout(function(){
 	    $(".flash").fadeOut("slow");
+	    $(".flash").removeClass("success");
 		}, 2000)
 	});
-	$(document).on("ajaxError", function () {
-		$(".flash").text(xhr.responseText).addClass("error");
-		setTimeout(function(){
-	    $(".flash").fadeOut("slow");
-		}, 2000)
+	$(document).on("ajaxComplete", function() {
+	 $(".flash").removeClass("waiting");
 	});
 
 });
