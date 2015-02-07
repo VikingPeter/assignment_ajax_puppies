@@ -10,7 +10,8 @@ function getPupsList() {
 		success: function( json ) {
 			for (var i = 0; i < json.length; i++) {
 				var puppy = json[i].breed.name + " named " + json[i].name
-				appendPup(puppy, "li id=" + json[i].name, $pupList);
+				appendPup("[" + json[i].id + "] " + puppy, "li id=" + json[i].name, $pupList);
+				appendPup("Adopt!", "a class='delete' href='#' data-id=" + json[i].id, $('li').last())
 			};
 		},
 	  error: function( xhr, status, errorThrown ) {
@@ -28,7 +29,6 @@ function getBreedsList() {
 		type: "GET",
 		dataType: "json",
 		success: function( json ) {
-			console.log(json)
 			for (var i = 0; i < json.length; i++) {
 				appendPup(json[i].name, "option value=" + json[i].id, $breedSelect);
 			};
@@ -67,8 +67,39 @@ function sendPup() {
 	  	console.dir( xhr );
 	  }
 	})
-
 }
+
+function deletePup( puppyId ) {
+	$.ajax({
+
+	  url: "https://rocky-dusk-3509.herokuapp.com/puppies/" + puppyId + ".json",
+
+	  type: "DELETE",
+	  dataType: "json",
+	  contentType: "application/json",
+
+	  data: JSON.stringify({ id:puppyId }),
+
+	  success: function( json ) {
+	  	$('span').text(json.name + " was adopted!");
+	  	refreshPupsList();
+	  },
+	  error: function( xhr, status, errorThrown ) {
+	  	$(".flash").text(status).addClass("error");
+	  	console.log( "Error: " + errorThrown );
+	  	console.log( "Status: " + status );
+	  	console.dir( xhr );
+	  }
+	})
+}
+
+function refreshPupsList() {
+	$("li").remove();
+	getPupsList();
+}
+
+
+
 
 $(document).ready(function() {
 	getPupsList();
@@ -77,9 +108,14 @@ $(document).ready(function() {
 		sendPup();
 		e.preventDefault();
 	});
+
 	$("#refresh").click(function(){
-		$("li").remove();
-		getPupsList();
+		refreshPupsList();
+	});
+
+	$("ul").click('.delete', function(event){
+		puppyId = $(event.target).data('id')
+		deletePup(puppyId);
 	});
 
 	$(document).on("ajaxStart", function() {
