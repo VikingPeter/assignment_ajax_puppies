@@ -1,7 +1,7 @@
 
 function getPupsList() {
 
-	var pupList = $('.index-puppies');
+	var $pupList = $('.index-puppies');
 
 	$.ajax({
 		url: "https://rocky-dusk-3509.herokuapp.com/puppies.json",
@@ -10,7 +10,7 @@ function getPupsList() {
 		success: function( json ) {
 			for (var i = 0; i < json.length; i++) {
 				var puppy = json[i].breed.name + " named " + json[i].name
-				appendPup(puppy, "li id=" + json[i].name, pupList);
+				appendPup(puppy, "li id=" + json[i].name, $pupList);
 			};
 		},
 	  error: function( xhr, status, errorThrown ) {
@@ -21,7 +21,7 @@ function getPupsList() {
 
 function getBreedsList() {
 
-	var breedSelect = $('.select-puppies');
+	var $breedSelect = $('.select-puppies');
 
 	$.ajax({
 		url: "https://rocky-dusk-3509.herokuapp.com/breeds.json",
@@ -30,7 +30,7 @@ function getBreedsList() {
 		success: function( json ) {
 			console.log(json)
 			for (var i = 0; i < json.length; i++) {
-				appendPup(json[i].name, "option value=" + json[i].id, breedSelect);
+				appendPup(json[i].name, "option value=" + json[i].id, $breedSelect);
 			};
 		},
 	  error: function( xhr, status, errorThrown ) {
@@ -47,14 +47,24 @@ function appendPup(string, tag, element) {
 
 function sendPup() {
 	$.ajax({
+
 	  url: "https://rocky-dusk-3509.herokuapp.com/puppies.json",
+
 	  type: "POST",
-	  data: $('.puppy-form').serializeArray(),
+	  dataType: "json",
+	  contentType: "application/json",
+
+	  data: JSON.stringify({name:$('.puppy-name').val(),
+					 breed_id:$('.select-puppies').val()}),
+
 	  success: function( json ) {
 	  	$('span').text(json.name + " created successfully");
 	  },
 	  error: function( xhr, status, errorThrown ) {
 	  	$(".flash").text(status).addClass("error");
+	  	console.log( "Error: " + errorThrown );
+	  	console.log( "Status: " + status );
+	  	console.dir( xhr );
 	  }
 	})
 
@@ -63,11 +73,12 @@ function sendPup() {
 $(document).ready(function() {
 	getPupsList();
 	getBreedsList();
-	$('button').click(function(){
+	$("form").submit(function(e){
 		sendPup();
+		e.preventDefault();
 	});
-	$('#refresh').click(function(){
-		$('li').remove();
+	$("#refresh").click(function(){
+		$("li").remove();
 		getPupsList();
 	});
 
